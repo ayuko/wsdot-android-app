@@ -1,7 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, WSDOT!</string>
+
     <string name="app_name">WSDOT</string>
     <string name="no_list_data">Data could not be displayed</string>
 	<string name="detail_empty">No details found</string>
+
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_share">Share</string>
+    
+    <string name="btn_traffic">Traffic</string>
+    <string name="btn_passes">Mountain Passes</string>
+    <string name="btn_ferries">Ferries</string>
+    <string name="btn_social">Social Media</string>
+    <string name="btn_tolling">Tolling</string>
+    <string name="btn_border">Border Wait</string>
+    
+    <string name="title_border">Border Wait</string>
+	
 </resources>

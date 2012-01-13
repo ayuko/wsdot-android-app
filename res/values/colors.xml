@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <color name="actionbar_title_color">#017359</color> <!-- #224894 -->
+    
     <color name="black">#f000</color>
     <color name="white">#ffff</color>
     <color name="semi_white">#f888</color>
     <color name="semi_black">#f666</color>
+    
+    <color name="accent_1">#ff29549f</color>
+    
 </resources>

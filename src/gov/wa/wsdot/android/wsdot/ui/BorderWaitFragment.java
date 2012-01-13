@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.shared.BorderWaitItem;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 
@@ -31,13 +32,10 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,58 +45,63 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BorderWait extends ListActivity {
+public class BorderWaitFragment extends ListFragment {
 	private static final String DEBUG_TAG = "BorderWait";
 	private ArrayList<BorderWaitItem> borderWaitItems = null;
 	private BorderWaitItemAdapter adapter;
 	
 	private HashMap<Integer, Integer> routeImage = new HashMap<Integer, Integer>();
+	private View mLoadingSpinner;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        AnalyticsUtils.getInstance(this).trackPageView("/Canadian Border");
-        
-        setContentView(R.layout.main);
-        ((TextView)findViewById(R.id.sub_section)).setText("Northbound Wait Times");
+        AnalyticsUtils.getInstance(getActivity()).trackPageView("/Canadian Border");
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_list_with_spinner, null);
+
+        // For some reason, if we omit this, NoSaveStateFrameLayout thinks we are
+        // FILL_PARENT / WRAP_CONTENT, making the progress bar stick to the top of the activity.
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.FILL_PARENT));
+
+        mLoadingSpinner = root.findViewById(R.id.loading_spinner);
+
+        return root;
+    }    
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         borderWaitItems = new ArrayList<BorderWaitItem>();
-        this.adapter = new BorderWaitItemAdapter(this, R.layout.row, borderWaitItems);
+        this.adapter = new BorderWaitItemAdapter(getActivity(), R.layout.row, borderWaitItems);
         setListAdapter(this.adapter);
         
         routeImage.put(5, R.drawable.i5);
         routeImage.put(9, R.drawable.sr9);
         routeImage.put(539, R.drawable.sr539);
         routeImage.put(543, R.drawable.sr543);
-        routeImage.put(97, R.drawable.us97);
+        routeImage.put(97, R.drawable.us97);        
         
         new GetBorderWaitItems().execute();
     }
-	
+    
     private class GetBorderWaitItems extends AsyncTask<String, Integer, String> {
-    	private final ProgressDialog dialog = new ProgressDialog(BorderWait.this);
 
 		@Override
 		protected void onPreExecute() {
-	        this.dialog.setMessage("Retrieving border wait times ...");
-	        this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	        this.dialog.setMax(9);
-			this.dialog.setOnCancelListener(new OnCancelListener() {
-	            public void onCancel(DialogInterface dialog) {
-	                cancel(true);
-	            }
-			});
-	        this.dialog.show();
+			mLoadingSpinner.setVisibility(View.VISIBLE);
 		}
     	
 	    protected void onCancelled() {
-	        Toast.makeText(BorderWait.this, "Cancelled", Toast.LENGTH_SHORT).show();
+	        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
 	    }
-		
-		@Override
-		protected void onProgressUpdate(Integer... progress) {
-			this.dialog.incrementProgressBy(progress[0]);
-		}
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -141,9 +144,8 @@ public class BorderWait extends ListActivity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
+			mLoadingSpinner.setVisibility(View.GONE);
+			
             if (borderWaitItems != null && borderWaitItems.size() > 0) {
                 adapter.notifyDataSetChanged();
                 for(int i=0;i<borderWaitItems.size();i++)
@@ -163,16 +165,14 @@ public class BorderWait extends ListActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-	        View v = convertView;
-	        if (v == null) {
-	            LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            v = vi.inflate(R.layout.row, null);
+	        if (convertView == null) {
+	            convertView = getActivity().getLayoutInflater().inflate(R.layout.row, null);
 	        }
 	        BorderWaitItem o = items.get(position);
 	        if (o != null) {
-	            TextView tt = (TextView) v.findViewById(R.id.toptext);
-	            TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-	            ImageView iv = (ImageView) v.findViewById(R.id.icon);
+	            TextView tt = (TextView) convertView.findViewById(R.id.toptext);
+	            TextView bt = (TextView) convertView.findViewById(R.id.bottomtext);
+	            ImageView iv = (ImageView) convertView.findViewById(R.id.icon);
 	            if (tt != null) {
 	            	tt.setText(o.getTitle());
 	            }
@@ -181,7 +181,7 @@ public class BorderWait extends ListActivity {
 	            }
 	       		iv.setImageResource(routeImage.get(o.getRoute()));
 	        }
-	        return v;
+	        return convertView;
         }
 	}
 }
