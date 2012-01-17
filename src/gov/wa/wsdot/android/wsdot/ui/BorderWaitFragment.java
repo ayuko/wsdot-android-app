@@ -38,6 +38,9 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -56,6 +59,7 @@ public class BorderWaitFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         AnalyticsUtils.getInstance(getActivity()).trackPageView("/Canadian Border");
     }
 
@@ -74,6 +78,23 @@ public class BorderWaitFragment extends ListFragment {
 
         return root;
     }    
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.refresh_menu_items, menu);
+
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+    	case R.id.menu_refresh:
+    		adapter.clear();
+    		new GetBorderWaitItems().execute();
+    	}
+    	return super.onOptionsItemSelected(item);    	
+    }
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -138,6 +159,7 @@ public class BorderWaitFragment extends ListFragment {
 
 			} catch (Exception e) {
 				Log.e(DEBUG_TAG, "Error in network call", e);
+	    		//Toast.makeText(getActivity(), "", Toast.LENGTH_LONG).show();
 			}
 			return null;
 		}

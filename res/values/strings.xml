@@ -17,4 +17,6 @@
     
     <string name="title_border">Border Wait</string>
 	
+    <string name="description_refresh">Refresh</string>
+    
 </resources>
