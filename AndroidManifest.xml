@@ -76,10 +76,7 @@
    		
    		<activity
    		    android:name="PhotoItemDetails" />
-   		
-   		<activity
-   		    android:name="About" />
-   		
+   		 		
    		<activity
    		    android:name="SocialMedia" />
    		
@@ -174,6 +171,10 @@
    		    android:name="CameraVideo" />
 
    		<!-- Phone-only activities -->
+
+   		<activity
+   		    android:name=".ui.phone.AboutActivity"
+   		    android:label="@string/title_about" />  
    		
    		<activity
    		    android:name=".ui.phone.BorderWaitActivity"

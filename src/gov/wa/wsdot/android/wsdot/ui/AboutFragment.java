@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,39 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.TextView;
 
-public class About extends Activity {
-	WebView webview;
+public class AboutFragment extends Fragment {
+
+	private WebView mWebView;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		AnalyticsUtils.getInstance(getActivity()).trackPageView("/About");
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_webview_with_spinner, null);
 		
-		AnalyticsUtils.getInstance(this).trackPageView("/About");
+        mWebView = (WebView) root.findViewById(R.id.webview);
+		mWebView.getSettings().setJavaScriptEnabled(true);
+		mWebView.getSettings().setPluginsEnabled(true);
+		mWebView.loadDataWithBaseURL(null, formatText(), "text/html", "utf-8", null);	
 		
-		setContentView(R.layout.webview);
-		((TextView)findViewById(R.id.sub_section)).setText("About");
-		
-		webview = (WebView)findViewById(R.id.webview);
-		webview.getSettings().setJavaScriptEnabled(true);
-		webview.getSettings().setPluginsEnabled(true);
-		webview.loadDataWithBaseURL(null, formatText(), "text/html", "utf-8", null);
+		return root;
 	}
 	
 	private String formatText()	{
@@ -53,18 +61,9 @@ public class About extends Activity {
 				"about Washington's transportation system.</p>" +
 				"<p>Questions, comments or suggestions can be e-mailed to the <a href=\"mailto:webfeedback@wsdot.wa.gov\">WSDOT " +
 				"Communications Office</a> or give us a call at " +
-				"<a href=\"tel:3607057079\">360-705-7079</a>.</p><br />" +
-				"<p style=\"color:#959595;\">Portions of images are modifications based on work created <a href=\"http://code.google.com/policies.html\">and shared by Google</a> and used according to terms described in the <a href=\"http://creativecommons.org/licenses/by/3.0/\">Creative Commons 3.0 Attribution License.</p></a>");
+				"<a href=\"tel:3607057079\">360-705-7079</a>.</p><br />");
 			
 		return sb.toString();
 	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ((keyCode == KeyEvent.KEYCODE_BACK) && webview.canGoBack()) {
-	        webview.goBack();
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}		
+		
 }
