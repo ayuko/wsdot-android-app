@@ -21,6 +21,7 @@ package gov.wa.wsdot.android.wsdot;
 import gov.wa.wsdot.android.wsdot.shared.ExpressLaneItem;
 import gov.wa.wsdot.android.wsdot.shared.LatLonItem;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
+import gov.wa.wsdot.android.wsdot.util.FixedMyLocationOverlay;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

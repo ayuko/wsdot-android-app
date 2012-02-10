@@ -18,24 +18,26 @@
 
 package gov.wa.wsdot.android.wsdot;
 
+import gov.wa.wsdot.android.wsdot.ui.FerriesFragment;
+import gov.wa.wsdot.android.wsdot.ui.MainMenuFragment;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 import android.view.MenuItem;
 
-public class WSDOT extends MainMenu {
+public class WSDOT extends MainMenuFragment {
 	
 	@Override
-	void prepareMenu() {
-		addMenuItem("News & Social Media", SocialMedia.class);
+	public void prepareMenu() {
+		//addMenuItem("News & Social Media", SocialMediaFragment.class);
 		addMenuItem("Mountain Passes", MountainPassConditions.class);
 		//addMenuItem("Canadian Border", BorderWait.class);
-		addMenuItem("Ferries", Ferries.class);
+		addMenuItem("Ferries", FerriesFragment.class);
 		addMenuItem("Traffic Map", TrafficMap.class);
 		addMenuItem("Toll Rates", TollRatesTabActivity.class);
 	}
 
 	@Override
-	void analyticsTracker() {
-		AnalyticsUtils.getInstance(this).trackPageView("/");		
+	public void analyticsTracker() {
+		AnalyticsUtils.getInstance(getActivity()).trackPageView("/");		
 	}
 	
 	/*

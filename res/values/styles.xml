@@ -95,4 +95,26 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <!-- What's Happening section in Home activity -->
+
+    <style name="WhatsHappeningItemBase">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:paddingLeft">@dimen/whats_happening_item_padding</item>
+        <item name="android:paddingRight">@dimen/whats_happening_item_padding</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="WhatsHappeningStaticItem" parent="style/WhatsHappeningItemBase">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:maxLines">2</item>
+    </style>
+    
 </resources>

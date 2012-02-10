@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,20 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.Blog;
+import gov.wa.wsdot.android.wsdot.News;
+import gov.wa.wsdot.android.wsdot.Photos;
+import gov.wa.wsdot.android.wsdot.Twitter;
+import gov.wa.wsdot.android.wsdot.Video;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 import android.os.Bundle;
-import android.widget.TextView;
 
-public class SocialMedia extends MainMenu {
+public class SocialMediaFragment extends MainMenuFragment {
 
 	@Override
-	void prepareMenu() {
+	public void prepareMenu() {
 		addMenuItem("News", News.class);
 		addMenuItem("Twitter", Twitter.class);
 		addMenuItem("Photos", Photos.class);
@@ -34,13 +38,12 @@ public class SocialMedia extends MainMenu {
 	}
 
 	@Override
-	void analyticsTracker() {
-		AnalyticsUtils.getInstance(this).trackPageView("/News & Social Media");		
+	public void analyticsTracker() {
+		AnalyticsUtils.getInstance(getActivity()).trackPageView("/News & Social Media");		
 	}
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((TextView)findViewById(R.id.sub_section)).setText("News & Social Media");
 	}
 }

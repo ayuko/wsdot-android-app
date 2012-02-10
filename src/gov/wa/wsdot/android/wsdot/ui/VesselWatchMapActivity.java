@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,11 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
+import gov.wa.wsdot.android.wsdot.util.FixedMyLocationOverlay;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -44,14 +46,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -63,34 +66,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
-import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
-public class VesselWatchMap extends MapActivity {
+public class VesselWatchMapActivity extends BaseActivity {
 
 	private static final int IO_BUFFER_SIZE = 4 * 1024;
 	private static final String DEBUG_TAG = "VesselWatchMap";
 	private MapView map = null;
 	private Handler handler = new Handler();
 	private Timer timer;
-	private boolean customTitleSupported;
-	private ProgressBar titleProgressBar;
 	private boolean firstRun = true;
-	private FixedMyLocationOverlay myLocationOverlay;
+	private FixedMyLocationOverlay mMyLocationOverlay;
 	private VesselsOverlay vessels = null;
 	private CamerasOverlay cameras = null;
-	boolean showCameras;
-	boolean showShadows;
-	
+	private boolean showCameras;
+	private boolean showShadows;	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +96,17 @@ public class VesselWatchMap extends MapActivity {
         AnalyticsUtils.getInstance(this).trackPageView("/Ferries/Vessel Watch");
         
         // Setup the unique latitude, longitude and zoom level
-        prepareMap();
+		super.setContentView(R.layout.map);
+		
+		Double latitude = 47.565125;
+        Double longitude = -122.480508;
+        map = (MapView) findViewById(R.id.mapview);
+        map.setSatellite(false);
+        map.getController().setZoom(11);
+        map.setBuiltInZoomControls(true);
+        map.setTraffic(false);
+        GeoPoint newPoint = new GeoPoint((int)(latitude * 1E6), (int)(longitude * 1E6));
+        map.getController().animateTo(newPoint);
 
         /**
          * Using an extended version of MyLocationOverlay class because it has been
@@ -110,47 +118,20 @@ public class VesselWatchMap extends MapActivity {
          * 
          * http://dimitar.me/applications-that-use-the-mylocationoverlay-class-crash-on-the-new-droid-x/
          */
-		myLocationOverlay = new FixedMyLocationOverlay(this, map);
-		map.getOverlays().add(myLocationOverlay);		
+        mMyLocationOverlay = new FixedMyLocationOverlay(this, map);
+		map.getOverlays().add(mMyLocationOverlay);		
 
         // Check preferences
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         showCameras = settings.getBoolean("KEY_SHOW_CAMERAS", true); 
         showShadows = settings.getBoolean("KEY_SHOW_MARKER_SHADOWS", true);
     }
-	
-	public void prepareMap() {
-		// Check if custom title is supported. Not sure why it wouldn't be.
-        //customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		customTitleSupported = false;
-		super.setContentView(R.layout.map);
-
-		if (customTitleSupported) {
-			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);		
-			final TextView leftText = (TextView) findViewById(R.id.left_text);
-			leftText.setText(getText(R.string.app_name).toString());
-			titleProgressBar = (ProgressBar) findViewById(R.id.progress_small_title);
-			titleProgressBar.setVisibility(ProgressBar.INVISIBLE);			
-		}
-		
-		((TextView)findViewById(R.id.sub_section)).setText("Ferries Vessel Watch");
-		
-		Double latitude = 47.565125;
-        Double longitude = -122.480508;
-        map = (MapView) findViewById(R.id.mapview);
-        map.setSatellite(false);
-        map.getController().setZoom(11);
-        map.setBuiltInZoomControls(true);
-        map.setTraffic(false);
-        GeoPoint newPoint = new GeoPoint((int)(latitude * 1E6), (int)(longitude * 1E6));
-        map.getController().animateTo(newPoint);		
-	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		timer.cancel();
-		myLocationOverlay.disableMyLocation();
+		mMyLocationOverlay.disableMyLocation();
 	}
 	
 	@Override
@@ -158,33 +139,36 @@ public class VesselWatchMap extends MapActivity {
 		super.onResume();
 		timer = new Timer();
 		timer.schedule(new MyTimerTask(), 0, 30000); // Schedule vessels to update every 30 seconds
-		myLocationOverlay.enableMyLocation();
+		mMyLocationOverlay.enableMyLocation();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.vessel_watch_menu, menu);
+		return true;
 	}
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.vessel_watch_menu, menu);
-
-	    if (showCameras) {
-	    	menu.getItem(2).setTitle("Hide Cameras");
+		if (showCameras) {
+	    	menu.getItem(1).setTitle("Hide Cameras");
 	    } else {
-	    	menu.getItem(2).setTitle("Show Cameras");
-	    }	    
+	    	menu.getItem(1).setTitle("Show Cameras");
+	    }
 	    
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 
 	    case R.id.my_location:
 	    	AnalyticsUtils.getInstance(this).trackPageView("/Ferries/Vessel Watch/My Location");
-	        myLocationOverlay.runOnFirstFix(new Runnable() {
+	        mMyLocationOverlay.runOnFirstFix(new Runnable() {
 	            public void run() {	    	
-	            	map.getController().animateTo(myLocationOverlay.getMyLocation());
+	            	map.getController().animateTo(mMyLocationOverlay.getMyLocation());
 	            }
 	        });
 	        return true;
@@ -238,7 +222,7 @@ public class VesselWatchMap extends MapActivity {
 			map.getOverlays().remove(cameras);
 			map.invalidate();
 			item.setTitle("Show Cameras");
-			showCameras = false;
+			this.showCameras = false;
 		} else {
 			AnalyticsUtils.getInstance(this).trackPageView("/Ferries/Vessel Watch/Show Cameras");
 			map.getOverlays().add(cameras);
@@ -247,18 +231,22 @@ public class VesselWatchMap extends MapActivity {
 			showCameras = true;
 		}		
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			invalidateOptionsMenu(); // Declare that the options menu has changed, so should be recreated.
+		}
+		
 		// Save camera display preference
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("KEY_SHOW_CAMERAS", showCameras);
 		editor.commit();
-	}	
+	}
 	
-	public void goToLocation(double latitude, double longitude, int zoomLevel) {	
+	private void goToLocation(double latitude, double longitude, int zoomLevel) {	
         GeoPoint newPoint = new GeoPoint((int)(latitude * 1E6), (int)(longitude * 1E6));
         map.getController().setZoom(zoomLevel);
         map.getController().setCenter(newPoint);
-	}	
+	}
 	
     public class MyTimerTask extends TimerTask {
         private Runnable runnable = new Runnable() {
@@ -372,8 +360,8 @@ public class VesselWatchMap extends MapActivity {
 		@Override
 		protected boolean onTap(int i) {
 			OverlayItem item = getItem(i);
-			AlertDialog.Builder builder = new AlertDialog.Builder(VesselWatchMap.this);
-			LayoutInflater inflater = (LayoutInflater) VesselWatchMap.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			AlertDialog.Builder builder = new AlertDialog.Builder(VesselWatchMapActivity.this);
+			LayoutInflater inflater = (LayoutInflater) VesselWatchMapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(R.layout.vesselwatch_dialog, null);
 			((TextView)layout.findViewById(R.id.VesselName)).setText(item.getTitle());
 			TextView mVesselDetails = (TextView)layout.findViewById(R.id.VesselDetails);
@@ -495,7 +483,7 @@ public class VesselWatchMap extends MapActivity {
 	}	
 
 	private class GetCameraImage extends AsyncTask<String, Void, Drawable> {
-		private final ProgressDialog dialog = new ProgressDialog(VesselWatchMap.this);
+		private final ProgressDialog dialog = new ProgressDialog(VesselWatchMapActivity.this);
 
 		protected void onPreExecute() {
 			this.dialog.setMessage("Retrieving camera image ...");
@@ -508,7 +496,7 @@ public class VesselWatchMap extends MapActivity {
 		}
 
 	    protected void onCancelled() {
-	    	Toast.makeText(VesselWatchMap.this, "Cancelled", Toast.LENGTH_SHORT).show();
+	    	Toast.makeText(VesselWatchMapActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
 	    }	
 		
 		protected Drawable doInBackground(String... params) {
@@ -520,8 +508,8 @@ public class VesselWatchMap extends MapActivity {
 				this.dialog.dismiss();
 			}
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(VesselWatchMap.this);
-			LayoutInflater inflater = (LayoutInflater) VesselWatchMap.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			AlertDialog.Builder builder = new AlertDialog.Builder(VesselWatchMapActivity.this);
+			LayoutInflater inflater = (LayoutInflater) VesselWatchMapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(R.layout.camera_dialog, null);
 			ImageView image = (ImageView) layout.findViewById(R.id.image);
 			
@@ -620,7 +608,7 @@ public class VesselWatchMap extends MapActivity {
 	}
 	
 	class OverlayTask extends AsyncTask<Void, Void, Void> {
-		private final ProgressDialog dialog = new ProgressDialog(VesselWatchMap.this);
+		private final ProgressDialog dialog = new ProgressDialog(VesselWatchMapActivity.this);
 		
 		@Override
 		public void onPreExecute() {
@@ -645,13 +633,11 @@ public class VesselWatchMap extends MapActivity {
 				
 				this.dialog.show();
 				
-			} else {
-				 if (customTitleSupported) titleProgressBar.setVisibility(ProgressBar.VISIBLE);
 			}
 		 }
 
 	    protected void onCancelled() {
-	        Toast.makeText(VesselWatchMap.this, "Cancelled", Toast.LENGTH_SHORT).show();
+	        Toast.makeText(VesselWatchMapActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
 	    }
 		
 		 @Override
@@ -669,8 +655,6 @@ public class VesselWatchMap extends MapActivity {
 				if (this.dialog.isShowing()) {
 					this.dialog.dismiss();
 				}
-			 } else {
-				 if (customTitleSupported) titleProgressBar.setVisibility(ProgressBar.INVISIBLE);
 			 }
 
 			map.getOverlays().add(vessels);

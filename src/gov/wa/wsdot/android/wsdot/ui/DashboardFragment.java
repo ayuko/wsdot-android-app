@@ -17,6 +17,8 @@
 package gov.wa.wsdot.android.wsdot.ui;
 
 import gov.wa.wsdot.android.wsdot.ui.phone.BorderWaitActivity;
+import gov.wa.wsdot.android.wsdot.ui.phone.FerriesActivity;
+import gov.wa.wsdot.android.wsdot.ui.phone.SocialMediaActivity;
 import gov.wa.wsdot.android.wsdot.R;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,7 +52,7 @@ public class DashboardFragment extends Fragment {
 
         root.findViewById(R.id.home_btn_ferries).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	Toast.makeText(getActivity(), "Ferries tapped", Toast.LENGTH_SHORT).show();
+            	startActivity(new Intent(getActivity(), FerriesActivity.class));
             }
         });
 
@@ -62,7 +64,7 @@ public class DashboardFragment extends Fragment {
         
         root.findViewById(R.id.home_btn_social).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	Toast.makeText(getActivity(), "Social Media tapped", Toast.LENGTH_SHORT).show();
+            	startActivity(new Intent(getActivity(), SocialMediaActivity.class));
             }
         });
         

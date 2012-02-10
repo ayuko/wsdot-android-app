@@ -28,13 +28,11 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />    
-
-   	<uses-library android:name="com.google.android.maps" />	
 	
     <application
 	 	android:icon="@drawable/icon"
 	 	android:label="@string/app_name"
-		android:debuggable="false"
+		android:debuggable="true"
 		android:theme="@style/AppTheme"
 		android:hardwareAccelerated="true">
 
@@ -48,7 +46,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+   		<activity
+   		    android:name=".ui.VesselWatchMapActivity"
+   		    android:label="@string/title_vesselwatch"
+   		    android:configChanges="orientation|keyboardHidden" />        
         
+   		<activity
+   		    android:name=".ui.VesselWatchActivity"
+   		    android:label="Vessel Watch" /> 
+   		
    		<activity
    		    android:name="News"
    		    android:configChanges="orientation|keyboardHidden" />
@@ -76,9 +83,6 @@
    		
    		<activity
    		    android:name="PhotoItemDetails" />
-   		 		
-   		<activity
-   		    android:name="SocialMedia" />
    		
    		<activity
    		    android:name="MountainPassConditions"
@@ -122,9 +126,6 @@
    		    android:name="EditPreferences" />
    		
    		<activity
-   		    android:name="Ferries" />
-   		
-   		<activity
    		    android:name="RouteAlerts"
    		    android:configChanges="orientation|keyboardHidden" />
    		
@@ -146,10 +147,6 @@
    		
    		<activity
    		    android:name="RouteScheduleDayDepartures" />
-   		
-   		<activity
-   		    android:name="VesselWatchMap"
-   		    android:configChanges="orientation|keyboardHidden" />
    		
    		<activity
    		    android:name="TollRatesTabActivity" />
@@ -180,10 +177,20 @@
    		    android:name=".ui.phone.BorderWaitActivity"
    		    android:label="@string/title_border"
    		    android:configChanges="orientation|keyboardHidden" />
+
+   		<activity
+   		    android:name=".ui.phone.FerriesActivity"
+   		    android:label="@string/title_ferries" />
+   		   		
+   		<activity
+   		    android:name=".ui.phone.SocialMediaActivity"
+   		    android:label="@string/title_socialmedia" />
    		
    		<!-- Tablet-only activities -->
    		
    		<!-- Other manifest items -->
+   		
+   		<uses-library android:name="com.google.android.maps" />
    		
     </application>
 

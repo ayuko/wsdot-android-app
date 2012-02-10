@@ -42,6 +42,9 @@ public class SimpleMenuItem implements MenuItem {
     private int mIconResId = 0;
     private boolean mEnabled = true;
 
+    /** If this item should launch a sub menu, this is the sub menu to launch */
+    private SimpleSubMenu mSubMenu;
+    
     public SimpleMenuItem(SimpleMenu menu, int id, int order, CharSequence title) {
         mMenu = menu;
         mId = id;
@@ -112,6 +115,17 @@ public class SimpleMenuItem implements MenuItem {
         return mEnabled;
     }
 
+    void setSubMenu(SimpleSubMenu subMenu) {
+        if ((mMenu != null) && (mMenu instanceof SubMenu)) {
+            throw new UnsupportedOperationException(
+            "Attempt to add a sub-menu to a sub-menu.");
+        }
+        
+        mSubMenu = subMenu;
+        
+        subMenu.setHeaderTitle(getTitle());
+    }    
+    
     // No-op operations. We use no-ops to allow inflation from menu XML.
 
     public int getGroupId() {

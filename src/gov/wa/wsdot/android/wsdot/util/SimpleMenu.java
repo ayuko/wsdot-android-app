@@ -149,7 +149,12 @@ public class SimpleMenu implements Menu {
     }
 
     public SubMenu addSubMenu(int groupId, int itemId, int order, CharSequence title) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        //throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+    	final SimpleMenuItem item = (SimpleMenuItem) addInternal(itemId, order, title);
+        final SimpleSubMenu subMenu = new SimpleSubMenu(mContext, this, item);
+        item.setSubMenu(subMenu);
+        
+		return subMenu;
     }
 
     public SubMenu addSubMenu(int groupId, int itemId, int order, int titleRes) {
