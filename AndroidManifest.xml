@@ -53,8 +53,9 @@
    		    android:configChanges="orientation|keyboardHidden" />        
         
    		<activity
-   		    android:name=".ui.VesselWatchActivity"
-   		    android:label="Vessel Watch" /> 
+   		    android:name=".ui.TrafficMapActivity"
+   		    android:label="@string/title_trafficmap"
+   		    android:configChanges="orientation|keyboardHidden" /> 
    		
    		<activity
    		    android:name="News"
@@ -106,7 +107,7 @@
    		    android:name="MountainPassItemMap" />
    		
    		<activity
-   		    android:name="TrafficMap"
+   		    android:name=".ui.TrafficMapActivity"
    		    android:configChanges="orientation|keyboardHidden" />
    		
    		<activity
@@ -185,6 +186,10 @@
    		<activity
    		    android:name=".ui.phone.SocialMediaActivity"
    		    android:label="@string/title_socialmedia" />
+   		
+   		<activity
+   		    android:name=".ui.phone.TrafficActivity"
+   		    android:label="@string/title_trafficmap" />
    		
    		<!-- Tablet-only activities -->
    		

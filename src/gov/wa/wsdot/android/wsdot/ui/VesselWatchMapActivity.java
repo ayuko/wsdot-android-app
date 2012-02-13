@@ -59,7 +59,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,7 +66,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -142,15 +140,21 @@ public class VesselWatchMapActivity extends BaseActivity {
 		mMyLocationOverlay.enableMyLocation();
 	}
 	
+	/*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.vessel_watch_menu, menu);
 		return true;
 	}
+	*/
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.vessel_watch_menu, menu);
+	    
 		if (showCameras) {
 	    	menu.getItem(1).setTitle("Hide Cameras");
 	    } else {
@@ -332,8 +336,8 @@ public class VesselWatchMapActivity extends BaseActivity {
 								+ "<br><b>Estimated Arrival:</b> " + item.getString("eta") + " " + item.getString("etaAMPM")
 								+ "<br><b>Heading:</b> "	+ Integer.toString(item.getInt("head")) + "\u00b0 " + item.getString("headtxt")
 								+ "<br><b>Speed:</b> " + Double.toString(item.getDouble("speed")) + " knots"
-								+ "<br><br><font color=\"white\"><a href=\"http://www.wsdot.com/ferries/vesselwatch/VesselDetail.aspx?vessel_id="
-									+ item.getInt("vesselID") + "\">" + item.getString("name") + " Web page</a></font>",
+								+ "<br><br><a href=\"http://www.wsdot.com/ferries/vesselwatch/VesselDetail.aspx?vessel_id="
+									+ item.getInt("vesselID") + "\">" + item.getString("name") + " Web page</a>",
 							getMarker(ferryIcon)));
 				}
 				
@@ -360,23 +364,15 @@ public class VesselWatchMapActivity extends BaseActivity {
 		@Override
 		protected boolean onTap(int i) {
 			OverlayItem item = getItem(i);
-			AlertDialog.Builder builder = new AlertDialog.Builder(VesselWatchMapActivity.this);
-			LayoutInflater inflater = (LayoutInflater) VesselWatchMapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View layout = inflater.inflate(R.layout.vesselwatch_dialog, null);
-			((TextView)layout.findViewById(R.id.VesselName)).setText(item.getTitle());
-			TextView mVesselDetails = (TextView)layout.findViewById(R.id.VesselDetails);
-			mVesselDetails.setMovementMethod(LinkMovementMethod.getInstance());
-			mVesselDetails.setText(Html.fromHtml(item.getSnippet()));
-			
-			builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(VesselWatchMapActivity.this);
+			dialog.setTitle(item.getTitle());
+			dialog.setMessage(Html.fromHtml(item.getSnippet()));		
+			dialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
 				}
 			});
-
-			builder.setView(layout);
-			AlertDialog alertDialog = builder.create();
-			alertDialog.show();		
+			dialog.show();
 			
 			return true;
 		}

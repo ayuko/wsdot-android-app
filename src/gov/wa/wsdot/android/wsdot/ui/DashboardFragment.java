@@ -16,10 +16,10 @@
 
 package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.ui.phone.BorderWaitActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.FerriesActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.SocialMediaActivity;
-import gov.wa.wsdot.android.wsdot.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -45,9 +45,8 @@ public class DashboardFragment extends Fragment {
         // Attach event handlers
         root.findViewById(R.id.home_btn_traffic).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	Toast.makeText(getActivity(), "Traffic tapped", Toast.LENGTH_SHORT).show();              
-            }
-            
+            	startActivity(new Intent(getActivity(), TrafficMapActivity.class));
+            }            
         });
 
         root.findViewById(R.id.home_btn_ferries).setOnClickListener(new View.OnClickListener() {
@@ -70,7 +69,7 @@ public class DashboardFragment extends Fragment {
         
         root.findViewById(R.id.home_btn_tolling).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	Toast.makeText(getActivity(), "Tolling tapped", Toast.LENGTH_SHORT).show();
+            	Toast.makeText(getActivity(), "Toll Rates tapped", Toast.LENGTH_SHORT).show();
             }
         });        
 

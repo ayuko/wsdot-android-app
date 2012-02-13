@@ -18,8 +18,8 @@
 
 package gov.wa.wsdot.android.wsdot;
 
-import gov.wa.wsdot.android.wsdot.ui.FerriesFragment;
 import gov.wa.wsdot.android.wsdot.ui.MainMenuFragment;
+import gov.wa.wsdot.android.wsdot.ui.TrafficMapActivity;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 import android.view.MenuItem;
 
@@ -30,8 +30,8 @@ public class WSDOT extends MainMenuFragment {
 		//addMenuItem("News & Social Media", SocialMediaFragment.class);
 		addMenuItem("Mountain Passes", MountainPassConditions.class);
 		//addMenuItem("Canadian Border", BorderWait.class);
-		addMenuItem("Ferries", FerriesFragment.class);
-		addMenuItem("Traffic Map", TrafficMap.class);
+		//addMenuItem("Ferries", FerriesFragment.class);
+		addMenuItem("Traffic Map", TrafficMapActivity.class);
 		addMenuItem("Toll Rates", TollRatesTabActivity.class);
 	}
 
