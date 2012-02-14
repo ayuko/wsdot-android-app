@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,14 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-public class EditPreferences extends PreferenceActivity {
+public class EditPreferencesActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         

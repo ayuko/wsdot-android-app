@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,10 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.MountainPassItemTabs;
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.shared.CameraItem;
 import gov.wa.wsdot.android.wsdot.shared.ForecastItem;
 import gov.wa.wsdot.android.wsdot.shared.MountainPassItem;
@@ -31,7 +33,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,14 +42,11 @@ import java.util.zip.GZIPInputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,28 +57,45 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MountainPassConditions extends ListActivity {
+public class MountainPassFragment extends ListFragment {
 	private static final String DEBUG_TAG = "MountainPassConditions";
 	private ArrayList<MountainPassItem> mountainPassItems = null;
 	private MountainPassItemAdapter adapter;
-
 	private HashMap<Integer, String[]> weatherPhrases = new HashMap<Integer, String[]>();
+	private View mLoadingSpinner;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        AnalyticsUtils.getInstance(this).trackPageView("/Mountain Passes");
-        
-        setContentView(R.layout.main);
-        ((TextView)findViewById(R.id.sub_section)).setText("Mountain Passes");
-        mountainPassItems = new ArrayList<MountainPassItem>();
-        this.adapter = new MountainPassItemAdapter(this, R.layout.row, mountainPassItems);
-        setListAdapter(this.adapter);     
-        buildWeatherPhrases();
-        new GetMountainPassItems().execute();       
+        AnalyticsUtils.getInstance(getActivity()).trackPageView("/Mountain Passes");
     }
 	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_list_with_spinner, null);
+
+        // For some reason, if we omit this, NoSaveStateFrameLayout thinks we are
+        // FILL_PARENT / WRAP_CONTENT, making the progress bar stick to the top of the activity.
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.FILL_PARENT));
+
+        mLoadingSpinner = root.findViewById(R.id.loading_spinner);    	
+    	
+    	return root;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
+        mountainPassItems = new ArrayList<MountainPassItem>();
+        this.adapter = new MountainPassItemAdapter(getActivity(), R.layout.row, mountainPassItems);
+        setListAdapter(this.adapter);     
+        buildWeatherPhrases();
+        
+        new GetMountainPassItems().execute();
+	}
+
 	private void buildWeatherPhrases() {
 		String[] weather_clear = {"clear"};
 		String[] weather_few_clouds = {"scattered clouds"};
@@ -103,10 +119,10 @@ public class MountainPassConditions extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Bundle b = new Bundle();
-		Intent intent = new Intent(this, MountainPassItemTabs.class);
+		Intent intent = new Intent(getActivity(), MountainPassItemTabs.class);
 		b.putString("MountainPassName", mountainPassItems.get(position).getMountainPassName());
 		b.putString("DateUpdated", mountainPassItems.get(position).getDateUpdated());
 		b.putString("TemperatureInFahrenheit", mountainPassItems.get(position).getTemperatureInFahrenheit());
@@ -127,23 +143,14 @@ public class MountainPassConditions extends ListActivity {
 	}
    
 	private class GetMountainPassItems extends AsyncTask<String, Integer, String> {
-		private final ProgressDialog dialog = new ProgressDialog(MountainPassConditions.this);
 
 		@Override
 		protected void onPreExecute() {
-	        this.dialog.setMessage("Retrieving mountain pass conditions ...");
-	        this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	        this.dialog.setMax(15);
-			this.dialog.setOnCancelListener(new OnCancelListener() {
-	            public void onCancel(DialogInterface dialog) {
-	                cancel(true);
-	            }				
-			});
-	        this.dialog.show();
+			mLoadingSpinner.setVisibility(View.VISIBLE);
 		}
 		
 	    protected void onCancelled() {
-	        Toast.makeText(MountainPassConditions.this, "Cancelled", Toast.LENGTH_SHORT).show();
+	        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
 	    }
 		
 		@Override
@@ -229,17 +236,12 @@ public class MountainPassConditions extends ListActivity {
 				Log.e(DEBUG_TAG, "Error in network call", e);
 			}
 			return null;
-		}		
-		
-		protected void onProgressUpdate(Integer... progress) {
-			this.dialog.incrementProgressBy(progress[0]);
 		}
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
+			mLoadingSpinner.setVisibility(View.GONE);
+			
             if(mountainPassItems != null && mountainPassItems.size() > 0){
                 adapter.notifyDataSetChanged();
                 for(int i=0;i<mountainPassItems.size();i++)
@@ -249,16 +251,15 @@ public class MountainPassConditions extends ListActivity {
 		}
 	}      
 	
-	@SuppressWarnings("unchecked")
 	private static Integer getWeatherImage(HashMap<Integer, String[]> weatherPhrases, String weather) {
 		Integer image = R.drawable.weather_na;
-		Set set = weatherPhrases.entrySet();
-		Iterator i = set.iterator();
+		Set<Entry<Integer, String[]>> set = weatherPhrases.entrySet();
+		Iterator<Entry<Integer, String[]>> i = set.iterator();
 		
 		if (weather.equals("")) return image;
 		
 		while(i.hasNext()) {
-			Map.Entry me = (Map.Entry)i.next();
+			Entry<Integer, String[]> me = i.next();
 			for (String phrase: (String[])me.getValue()) {
 				String patternStr = phrase;
 				Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
@@ -282,16 +283,14 @@ public class MountainPassConditions extends ListActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-	        View v = convertView;
-	        if (v == null) {
-	            LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            v = vi.inflate(R.layout.row, null);
+	        if (convertView == null) {
+	            convertView = getActivity().getLayoutInflater().inflate(R.layout.row, null);
 	        }
 	        MountainPassItem o = items.get(position);
 	        if (o != null) {
-	            TextView tt = (TextView) v.findViewById(R.id.toptext);
-	            TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-	            ImageView iv = (ImageView) v.findViewById(R.id.icon);
+	            TextView tt = (TextView) convertView.findViewById(R.id.toptext);
+	            TextView bt = (TextView) convertView.findViewById(R.id.bottomtext);
+	            ImageView iv = (ImageView) convertView.findViewById(R.id.icon);
 	            if (tt != null) {
 	            	tt.setText(o.getMountainPassName());
 	            }
@@ -300,7 +299,7 @@ public class MountainPassConditions extends ListActivity {
 	            }
 	       		iv.setImageResource(o.getWeatherIcon());
 	        }
-	        return v;
+	        return convertView;
         }
 	}
 }

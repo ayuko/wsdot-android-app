@@ -58,6 +58,10 @@
    		    android:configChanges="orientation|keyboardHidden" /> 
    		
    		<activity
+   		    android:name=".ui.EditPreferencesActivity"
+   		    android:label="@string/title_editpreferences" />   		
+   				
+   		<activity
    		    android:name="News"
    		    android:configChanges="orientation|keyboardHidden" />
    		
@@ -86,10 +90,6 @@
    		    android:name="PhotoItemDetails" />
    		
    		<activity
-   		    android:name="MountainPassConditions"
-   		    android:configChanges="orientation|keyboardHidden" />
-   		
-   		<activity
    		    android:name="MountainPassItemDetails" />
    		
    		<activity
@@ -107,10 +107,6 @@
    		    android:name="MountainPassItemMap" />
    		
    		<activity
-   		    android:name=".ui.TrafficMapActivity"
-   		    android:configChanges="orientation|keyboardHidden" />
-   		
-   		<activity
    		    android:name="SeattleTrafficAlerts"
    		    android:configChanges="orientation|keyboardHidden" />
    		
@@ -124,14 +120,7 @@
    		    android:configChanges="orientation|keyboardHidden" />
    		
    		<activity
-   		    android:name="EditPreferences" />
-   		
-   		<activity
-   		    android:name="RouteAlerts"
-   		    android:configChanges="orientation|keyboardHidden" />
-   		
-   		<activity
-   		    android:name="RouteAlertsItems" />
+   		    android:name=".ui.RouteAlertsItemsFragment" />
    		
    		<activity
    		    android:name="RouteAlertsItemDetails" />
@@ -182,14 +171,20 @@
    		<activity
    		    android:name=".ui.phone.FerriesActivity"
    		    android:label="@string/title_ferries" />
-   		   		
+
+   		<activity
+   		    android:name=".ui.phone.MountainPassActivity"
+   		    android:label="@string/title_mountainpass"
+   		    android:configChanges="orientation|keyboardHidden" />
+   		
+   		<activity
+   		    android:name=".ui.phone.RouteAlertsActivity"
+   		    android:label="@string/title_routealerts"
+   		    android:configChanges="orientation|keyboardHidden" />   		
+   				   		
    		<activity
    		    android:name=".ui.phone.SocialMediaActivity"
    		    android:label="@string/title_socialmedia" />
-   		
-   		<activity
-   		    android:name=".ui.phone.TrafficActivity"
-   		    android:label="@string/title_trafficmap" />
    		
    		<!-- Tablet-only activities -->
    		

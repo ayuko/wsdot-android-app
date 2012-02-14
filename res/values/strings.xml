@@ -22,6 +22,9 @@
     <string name="title_vesselwatch">Vessel Watch</string>
     <string name="title_trafficmap">Traffic Map</string>
     <string name="title_tollrates">Toll Rates</string>
+    <string name="title_routealerts">Route Alerts</string>
+    <string name="title_mountainpass">Mountain Passes</string>
+    <string name="title_editpreferences">Preferences</string>
 	
     <string name="description_refresh">Refresh</string>
     <string name="description_about">About</string>

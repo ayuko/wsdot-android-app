@@ -72,7 +72,7 @@ public class HomeActivity extends BaseActivity {
                 break;
 
             case R.id.menu_preferences:
-                Toast.makeText(this, "Preferences tapped", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, EditPreferencesActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -19,6 +19,7 @@ package gov.wa.wsdot.android.wsdot.ui;
 import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.ui.phone.BorderWaitActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.FerriesActivity;
+import gov.wa.wsdot.android.wsdot.ui.phone.MountainPassActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.SocialMediaActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -57,7 +58,7 @@ public class DashboardFragment extends Fragment {
 
         root.findViewById(R.id.home_btn_passes).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	Toast.makeText(getActivity(), "Mountain Passes tapped", Toast.LENGTH_SHORT).show();
+            	startActivity(new Intent(getActivity(), MountainPassActivity.class));
             }
         });
         

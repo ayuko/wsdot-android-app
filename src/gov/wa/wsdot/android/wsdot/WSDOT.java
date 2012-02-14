@@ -19,6 +19,7 @@
 package gov.wa.wsdot.android.wsdot;
 
 import gov.wa.wsdot.android.wsdot.ui.MainMenuFragment;
+import gov.wa.wsdot.android.wsdot.ui.MountainPassFragment;
 import gov.wa.wsdot.android.wsdot.ui.TrafficMapActivity;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 import android.view.MenuItem;
@@ -28,7 +29,7 @@ public class WSDOT extends MainMenuFragment {
 	@Override
 	public void prepareMenu() {
 		//addMenuItem("News & Social Media", SocialMediaFragment.class);
-		addMenuItem("Mountain Passes", MountainPassConditions.class);
+		addMenuItem("Mountain Passes", MountainPassFragment.class);
 		//addMenuItem("Canadian Border", BorderWait.class);
 		//addMenuItem("Ferries", FerriesFragment.class);
 		addMenuItem("Traffic Map", TrafficMapActivity.class);

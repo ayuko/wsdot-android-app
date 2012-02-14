@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.shared.FerriesRouteAlertItem;
 import gov.wa.wsdot.android.wsdot.shared.FerriesRouteItem;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
@@ -32,14 +33,12 @@ import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import android.app.ListActivity;
-import android.app.ProgressDialog;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,42 +48,51 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class RouteAlerts extends ListActivity {
+public class RouteAlertsFragment extends ListFragment {
 	private static final String DEBUG_TAG = "RouteAlerts";
 	private ArrayList<FerriesRouteItem> routeItems = null;
 	private RouteItemAdapter adapter;
+	private View mLoadingSpinner;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        AnalyticsUtils.getInstance(this).trackPageView("/Ferries/Route Alerts");
-        
-        setContentView(R.layout.main);
-        ((TextView)findViewById(R.id.sub_section)).setText("Ferries Route Alerts");
-        routeItems = new ArrayList<FerriesRouteItem>();
-        this.adapter = new RouteItemAdapter(this, android.R.layout.simple_list_item_1, routeItems);
-        setListAdapter(this.adapter);
-        new GetRouteAlerts().execute();
+        AnalyticsUtils.getInstance(getActivity()).trackPageView("/Ferries/Route Alerts");
     }
 	
-    private class GetRouteAlerts extends AsyncTask<String, Integer, String> {
-    	private final ProgressDialog dialog = new ProgressDialog(RouteAlerts.this);
+    @Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance) {
+    	ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_list_with_spinner, null);
+
+        // For some reason, if we omit this, NoSaveStateFrameLayout thinks we are
+        // FILL_PARENT / WRAP_CONTENT, making the progress bar stick to the top of the activity.
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.FILL_PARENT));
+
+        mLoadingSpinner = root.findViewById(R.id.loading_spinner);    	
+    	
+    	return root;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstance) {
+		super.onActivityCreated(savedInstance);
+        
+        routeItems = new ArrayList<FerriesRouteItem>();
+        this.adapter = new RouteItemAdapter(getActivity(), android.R.layout.simple_list_item_1, routeItems);
+        setListAdapter(this.adapter);
+        new GetRouteAlerts().execute();		
+	}
+
+	private class GetRouteAlerts extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected void onPreExecute() {
-	        this.dialog.setMessage("Retrieving routes with alerts ...");
-	        this.dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			this.dialog.setOnCancelListener(new OnCancelListener() {
-	            public void onCancel(DialogInterface dialog) {
-	                cancel(true);
-	            }
-			});
-	        this.dialog.show();
+			mLoadingSpinner.setVisibility(View.VISIBLE);
 		}
 
 	    protected void onCancelled() {
-	        Toast.makeText(RouteAlerts.this, "Cancelled", Toast.LENGTH_SHORT).show();
+	        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
 	    }
 		
 		@Override
@@ -149,10 +157,9 @@ public class RouteAlerts extends ListActivity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
-            if (routeItems != null && routeItems.size() > 0) {
+			mLoadingSpinner.setVisibility(View.GONE);
+
+			if (routeItems != null && routeItems.size() > 0) {
                 adapter.notifyDataSetChanged();
                 for(int i=0;i<routeItems.size();i++)
                 adapter.add(routeItems.get(i));
@@ -162,10 +169,10 @@ public class RouteAlerts extends ListActivity {
     }
     
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Bundle b = new Bundle();
-		Intent intent = new Intent(this, RouteAlertsItems.class);
+		Intent intent = new Intent(getActivity(), RouteAlertsItemsFragment.class);
 		b.putSerializable("routeItems", routeItems.get(position));
 		intent.putExtras(b);
 		startActivity(intent);
@@ -181,19 +188,17 @@ public class RouteAlerts extends ListActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-	        View v = convertView;
-	        if (v == null) {
-	            LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            v = vi.inflate(android.R.layout.simple_list_item_1, null);
+	        if (convertView == null) {
+	            convertView = getActivity().getLayoutInflater().inflate(android.R.layout.simple_list_item_1, null);
 	        }
 	        FerriesRouteItem o = items.get(position);
 	        if (o != null) {
-	            TextView tt = (TextView) v.findViewById(android.R.id.text1);
+	            TextView tt = (TextView) convertView.findViewById(android.R.id.text1);
 	            if (tt != null) {
 	            	tt.setText(o.getDescription());
 	            }
 	        }
-	        return v;
+	        return convertView;
         }
 	}
 }

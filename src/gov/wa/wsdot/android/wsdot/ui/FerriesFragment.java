@@ -18,8 +18,8 @@
 
 package gov.wa.wsdot.android.wsdot.ui;
 
-import gov.wa.wsdot.android.wsdot.RouteAlerts;
 import gov.wa.wsdot.android.wsdot.RouteSchedules;
+import gov.wa.wsdot.android.wsdot.ui.phone.RouteAlertsActivity;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 import android.os.Bundle;
 
@@ -27,7 +27,7 @@ public class FerriesFragment extends MainMenuFragment {
 	
 	@Override
 	public void prepareMenu() {
-		addMenuItem("Route Alerts", RouteAlerts.class);
+		addMenuItem("Route Alerts", RouteAlertsActivity.class);
 		addMenuItem("Route Schedules", RouteSchedules.class);
 		addMenuItem("Vessel Watch", VesselWatchMapActivity.class);
 	}
