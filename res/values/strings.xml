@@ -24,6 +24,7 @@
     <string name="title_tollrates">Toll Rates</string>
     <string name="title_routealerts">Route Alerts</string>
     <string name="title_mountainpass">Mountain Passes</string>
+    <string name="title_mountainpassdetails">Mountain Pass Details</string>
     <string name="title_editpreferences">Preferences</string>
 	
     <string name="description_refresh">Refresh</string>

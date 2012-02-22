@@ -20,6 +20,7 @@ package gov.wa.wsdot.android.wsdot;
 
 import gov.wa.wsdot.android.wsdot.shared.CameraItem;
 import gov.wa.wsdot.android.wsdot.shared.ForecastItem;
+import gov.wa.wsdot.android.wsdot.ui.MountainPassItemDetailsFragment;
 
 import java.util.ArrayList;
 
@@ -49,7 +50,7 @@ public class MountainPassItemTabs extends TabActivity {
 	    Intent intent;
 
 	    Bundle b = getIntent().getExtras();
-	    intent = new Intent().setClass(this, MountainPassItemDetails.class);
+	    intent = new Intent().setClass(this, MountainPassItemDetailsFragment.class);
 	    intent.putExtras(b);
 	    spec = tabHost.newTabSpec("info")
 	    				.setIndicator("Info", res.getDrawable(R.drawable.ic_tab_passes_info))

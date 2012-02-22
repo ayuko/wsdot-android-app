@@ -18,11 +18,11 @@
 
 package gov.wa.wsdot.android.wsdot.ui;
 
-import gov.wa.wsdot.android.wsdot.MountainPassItemTabs;
 import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.shared.CameraItem;
 import gov.wa.wsdot.android.wsdot.shared.ForecastItem;
 import gov.wa.wsdot.android.wsdot.shared.MountainPassItem;
+import gov.wa.wsdot.android.wsdot.ui.phone.MountainPassDetailsActivity;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 
 import java.io.BufferedInputStream;
@@ -49,6 +49,9 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -67,6 +70,7 @@ public class MountainPassFragment extends ListFragment {
     @Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         AnalyticsUtils.getInstance(getActivity()).trackPageView("/Mountain Passes");
     }
 	
@@ -84,6 +88,23 @@ public class MountainPassFragment extends ListFragment {
     	return root;
 	}
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.refresh_menu_items, menu);
+
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+    	case R.id.menu_refresh:
+    		adapter.clear();
+    		new GetMountainPassItems().execute();
+    	}
+    	return super.onOptionsItemSelected(item);    	
+    }    
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -122,7 +143,7 @@ public class MountainPassFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Bundle b = new Bundle();
-		Intent intent = new Intent(getActivity(), MountainPassItemTabs.class);
+		Intent intent = new Intent(getActivity(), MountainPassDetailsActivity.class);
 		b.putString("MountainPassName", mountainPassItems.get(position).getMountainPassName());
 		b.putString("DateUpdated", mountainPassItems.get(position).getDateUpdated());
 		b.putString("TemperatureInFahrenheit", mountainPassItems.get(position).getTemperatureInFahrenheit());

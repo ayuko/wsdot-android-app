@@ -19,15 +19,15 @@
 package gov.wa.wsdot.android.wsdot.ui.phone;
 
 import gov.wa.wsdot.android.wsdot.ui.BaseSinglePaneActivity;
-import gov.wa.wsdot.android.wsdot.ui.MountainPassFragment;
+import gov.wa.wsdot.android.wsdot.ui.MountainPassDetailsFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public class MountainPassActivity extends BaseSinglePaneActivity {
+public class MountainPassDetailsActivity extends BaseSinglePaneActivity {
 
 	@Override
 	protected Fragment onCreatePane() {
-		return new MountainPassFragment();
+		return new MountainPassDetailsFragment();
 	}
 	
 	@Override

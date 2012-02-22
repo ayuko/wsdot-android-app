@@ -90,9 +90,6 @@
    		    android:name="PhotoItemDetails" />
    		
    		<activity
-   		    android:name="MountainPassItemDetails" />
-   		
-   		<activity
    		    android:name="MountainPassItemTabs"
    		    android:configChanges="orientation|keyboardHidden" />
    		
@@ -176,6 +173,11 @@
    		    android:name=".ui.phone.MountainPassActivity"
    		    android:label="@string/title_mountainpass"
    		    android:configChanges="orientation|keyboardHidden" />
+   		
+   		<activity
+   		    android:name=".ui.phone.MountainPassDetailsActivity"
+   		    android:label="@string/title_mountainpassdetails"
+   		    android:theme="@style/StyledIndicators" />
    		
    		<activity
    		    android:name=".ui.phone.RouteAlertsActivity"
