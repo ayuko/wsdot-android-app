@@ -92,18 +92,7 @@
    		
    		<activity
    		    android:name="PhotoItemDetails" />
-   		
-   		<activity
-   		    android:name="MountainPassItemTabs"
-   		    android:configChanges="orientation|keyboardHidden" />
-   		
-   		<activity
-   		    android:name=".ui.MountainPassItemCameraFragment"
-   		    android:configChanges="orientation|keyboardHidden" />
-   		
-   		<activity
-   		    android:name=".ui.MountainPassItemForecastFragment" />
-   		
+
    		<activity
    		    android:name=".ui.MountainPassItemMapFragment" />
    		
