@@ -46,7 +46,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        
+        <activity
+   		    android:name=".ui.MountainPassDetailsFragment"
+   		    android:label="@string/title_mountainpassdetails" />
+        
    		<activity
    		    android:name=".ui.VesselWatchMapActivity"
    		    android:label="@string/title_vesselwatch"
@@ -94,14 +98,14 @@
    		    android:configChanges="orientation|keyboardHidden" />
    		
    		<activity
-   		    android:name="MountainPassItemCamera"
+   		    android:name=".ui.MountainPassItemCameraFragment"
    		    android:configChanges="orientation|keyboardHidden" />
    		
    		<activity
-   		    android:name="MountainPassItemForecast" />
+   		    android:name=".ui.MountainPassItemForecastFragment" />
    		
    		<activity
-   		    android:name="MountainPassItemMap" />
+   		    android:name=".ui.MountainPassItemMapFragment" />
    		
    		<activity
    		    android:name="SeattleTrafficAlerts"
@@ -173,17 +177,17 @@
    		    android:name=".ui.phone.MountainPassActivity"
    		    android:label="@string/title_mountainpass"
    		    android:configChanges="orientation|keyboardHidden" />
-   		
-   		<activity
-   		    android:name=".ui.phone.MountainPassDetailsActivity"
-   		    android:label="@string/title_mountainpassdetails"
-   		    android:theme="@style/StyledIndicators" />
-   		
+   				
    		<activity
    		    android:name=".ui.phone.RouteAlertsActivity"
    		    android:label="@string/title_routealerts"
    		    android:configChanges="orientation|keyboardHidden" />   		
-   				   		
+
+   		<activity
+   		    android:name=".ui.phone.TollRatesActivity"
+   		    android:label="@string/title_tollrates"
+   		    android:theme="@style/StyledIndicators" />
+   						   		
    		<activity
    		    android:name=".ui.phone.SocialMediaActivity"
    		    android:label="@string/title_socialmedia" />

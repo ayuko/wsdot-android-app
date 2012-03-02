@@ -20,7 +20,10 @@ package gov.wa.wsdot.android.wsdot;
 
 import gov.wa.wsdot.android.wsdot.shared.CameraItem;
 import gov.wa.wsdot.android.wsdot.shared.ForecastItem;
+import gov.wa.wsdot.android.wsdot.ui.MountainPassItemCameraFragment;
 import gov.wa.wsdot.android.wsdot.ui.MountainPassItemDetailsFragment;
+import gov.wa.wsdot.android.wsdot.ui.MountainPassItemForecastFragment;
+import gov.wa.wsdot.android.wsdot.ui.MountainPassItemMapFragment;
 
 import java.util.ArrayList;
 
@@ -63,7 +66,7 @@ public class MountainPassItemTabs extends TabActivity {
 	    // If there are no cameras for this pass, do not show the camera or map tabs
 	    if (cameraItems.isEmpty()) {
 	    } else {
-		    intent = new Intent().setClass(this, MountainPassItemCamera.class);	    
+		    intent = new Intent().setClass(this, MountainPassItemCameraFragment.class);	    
 		    b.putSerializable("Cameras", cameraItems);
 		    intent.putExtras(b);
 		    spec = tabHost.newTabSpec("cameras")
@@ -71,7 +74,7 @@ public class MountainPassItemTabs extends TabActivity {
 		    				.setContent(intent);
 		    tabHost.addTab(spec);
 	    	
-	    	intent = new Intent().setClass(this, MountainPassItemMap.class);	    
+	    	intent = new Intent().setClass(this, MountainPassItemMapFragment.class);	    
 		    intent.putExtras(b);
 		    spec = tabHost.newTabSpec("map")
 		    				.setIndicator("Map", res.getDrawable(R.drawable.ic_tab_passes_map))
@@ -82,7 +85,7 @@ public class MountainPassItemTabs extends TabActivity {
 	    // If there is no forecast for this pass, do not show the tab
 	    if (forecastItems.isEmpty()) {
 	    } else {
-		    intent = new Intent().setClass(this, MountainPassItemForecast.class);	    
+		    intent = new Intent().setClass(this, MountainPassItemForecastFragment.class);	    
 		    b.putSerializable("Forecasts", forecastItems);
 		    intent.putExtras(b);
 		    spec = tabHost.newTabSpec("forecast")

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,12 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
+import gov.wa.wsdot.android.wsdot.R.drawable;
+import gov.wa.wsdot.android.wsdot.R.id;
+import gov.wa.wsdot.android.wsdot.R.layout;
 import gov.wa.wsdot.android.wsdot.shared.CameraItem;
 
 import java.io.BufferedInputStream;
@@ -52,7 +56,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
-public class MountainPassItemMap extends MapActivity {
+public class MountainPassItemMapFragment extends BaseActivity {
 	
 	private static final int IO_BUFFER_SIZE = 4 * 1024;
 	private static final String DEBUG_TAG = "MountainPassItemMap";	
@@ -141,7 +145,7 @@ public class MountainPassItemMap extends MapActivity {
 	}	
 
 	private class GetCameraImage extends AsyncTask<String, Void, Drawable> {
-		private final ProgressDialog dialog = new ProgressDialog(MountainPassItemMap.this);
+		private final ProgressDialog dialog = new ProgressDialog(MountainPassItemMapFragment.this);
 
 		protected void onPreExecute() {
 			this.dialog.setMessage("Retrieving camera image ...");
@@ -154,7 +158,7 @@ public class MountainPassItemMap extends MapActivity {
 		}
 
 	    protected void onCancelled() {
-	    	Toast.makeText(MountainPassItemMap.this, "Cancelled", Toast.LENGTH_SHORT).show();
+	    	Toast.makeText(MountainPassItemMapFragment.this, "Cancelled", Toast.LENGTH_SHORT).show();
 	    }	
 		
 		protected Drawable doInBackground(String... params) {
@@ -166,8 +170,8 @@ public class MountainPassItemMap extends MapActivity {
 				this.dialog.dismiss();
 			}
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(MountainPassItemMap.this);
-			LayoutInflater inflater = (LayoutInflater) MountainPassItemMap.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			AlertDialog.Builder builder = new AlertDialog.Builder(MountainPassItemMapFragment.this);
+			LayoutInflater inflater = (LayoutInflater) MountainPassItemMapFragment.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(R.layout.camera_dialog, null);
 			ImageView image = (ImageView) layout.findViewById(R.id.image);
 			

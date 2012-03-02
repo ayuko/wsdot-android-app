@@ -34,6 +34,7 @@
     <string name="description_mylocation">My Location</string>
     <string name="description_cameras">Cameras</string>
     <string name="description_gotolocation">GoTo Location</string>
+    <string name="description_star">Star</string>
     
     <string name="whats_happening_default">High impact alerts and other important travel updates here.</string>
 

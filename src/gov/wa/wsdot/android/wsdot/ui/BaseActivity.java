@@ -105,5 +105,24 @@ public abstract class BaseActivity extends FragmentActivity {
         }
 
         return arguments;
+    }
+    
+    /**
+     * Converts a fragment arguments bundle into an intent.
+     */
+    public static Intent fragmentArgumentsToIntent(Bundle arguments) {
+        Intent intent = new Intent();
+        if (arguments == null) {
+            return intent;
+        }
+
+        final Uri data = arguments.getParcelable("_uri");
+        if (data != null) {
+            intent.setData(data);
+        }
+
+        intent.putExtras(arguments);
+        intent.removeExtra("_uri");
+        return intent;
     }    
 }

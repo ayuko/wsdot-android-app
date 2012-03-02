@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Washington State Department of Transportation
+ * Copyright (c) 2012 Washington State Department of Transportation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +16,59 @@
  *
  */
 
-package gov.wa.wsdot.android.wsdot;
+package gov.wa.wsdot.android.wsdot.ui;
 
+import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.shared.ForecastItem;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class MountainPassItemForecast extends ListActivity {
+public class MountainPassItemForecastFragment extends ListFragment {
 	private ArrayList<ForecastItem> forecastItems;
 	private MountainPassItemForecastAdapter adapter;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		forecastItems = (ArrayList<ForecastItem>)activity.getIntent().getSerializableExtra("Forecasts");
+	}	
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        forecastItems = (ArrayList<ForecastItem>)getIntent().getSerializableExtra("Forecasts");
-        this.adapter = new MountainPassItemForecastAdapter(this, R.layout.simple_list_item, forecastItems);
-        setListAdapter(this.adapter);        
 	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_list_with_spinner, null);
+
+        // For some reason, if we omit this, NoSaveStateFrameLayout thinks we are
+        // FILL_PARENT / WRAP_CONTENT, making the progress bar stick to the top of the activity.
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.FILL_PARENT));
+    	
+    	return root;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		
+        this.adapter = new MountainPassItemForecastAdapter(getActivity(), R.layout.simple_list_item, forecastItems);
+        setListAdapter(this.adapter);
+	}
+
 	private class MountainPassItemForecastAdapter extends ArrayAdapter<ForecastItem> {
         private ArrayList<ForecastItem> items;
 
@@ -54,15 +79,13 @@ public class MountainPassItemForecast extends ListActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-	        View v = convertView;
-	        if (v == null) {
-	            LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            v = vi.inflate(R.layout.simple_list_item, null);
+	        if (convertView == null) {
+	            convertView = getActivity().getLayoutInflater().inflate(R.layout.simple_list_item, null);
 	        }
 	        ForecastItem o = items.get(position);
 	        if (o != null) {
-	            TextView tt = (TextView) v.findViewById(R.id.title);
-	            TextView bt = (TextView) v.findViewById(R.id.description);
+	            TextView tt = (TextView) convertView.findViewById(R.id.title);
+	            TextView bt = (TextView) convertView.findViewById(R.id.description);
 	            if (tt != null) {
 	            	tt.setText(o.getDay());
 	            }
@@ -70,7 +93,7 @@ public class MountainPassItemForecast extends ListActivity {
             		bt.setText(o.getForecastText());
 	            }
 	        }
-	        return v;
+	        return convertView;
         }
 	}
 }

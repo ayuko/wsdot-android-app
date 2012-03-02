@@ -22,12 +22,10 @@ import gov.wa.wsdot.android.wsdot.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +37,7 @@ public class MountainPassItemDetailsFragment extends Fragment {
 	DateFormat displayDateFormat = new SimpleDateFormat("MMMM d, yyyy h:mm a");
 	
 	private ViewGroup mRootView;
-	private String mDateUpdated;
-	private String mMountainPassName;
+
 	private String mWeatherCondition;
 	private String mTemperatureInFahrenheit;
 	private String mElevationInFeet;
@@ -58,10 +55,8 @@ public class MountainPassItemDetailsFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.mountainpass_item_details, container);
+        mRootView = (ViewGroup) inflater.inflate(R.layout.mountainpass_item_details, null);
         
-        ((TextView)mRootView.findViewById(R.id.DateUpdated)).setText(mDateUpdated);
-        ((TextView)mRootView.findViewById(R.id.MountainPassName)).setText(mMountainPassName);
 		((TextView)mRootView.findViewById(R.id.WeatherCondition)).setText(mWeatherCondition);
 		((TextView)mRootView.findViewById(R.id.TemperatureInFahrenheit)).setText(mTemperatureInFahrenheit);
 		((TextView)mRootView.findViewById(R.id.ElevationInFeet)).setText(mElevationInFeet + " ft");
@@ -70,7 +65,7 @@ public class MountainPassItemDetailsFragment extends Fragment {
 		((TextView)mRootView.findViewById(R.id.RestrictionOneText)).setText(mRestrictionOneText);
 		((TextView)mRootView.findViewById(R.id.heading_RestrictionTwoTravelDirection)).setText("Restrictions " + mRestrictionTwoTravelDirection + ":");
 		((TextView)mRootView.findViewById(R.id.RestrictionTwoText)).setText(mRestrictionTwoText);        
-
+        
         return mRootView;		
 	}	
 	
@@ -85,8 +80,6 @@ public class MountainPassItemDetailsFragment extends Fragment {
 		
 		Bundle args = activity.getIntent().getExtras();
 		if (args != null) {
-			String tempDate = args.getString("DateUpdated");
-			mMountainPassName = args.getString("MountainPassName");
 			mWeatherCondition = args.getString("WeatherCondition");
 			mTemperatureInFahrenheit = args.getString("TemperatureInFahrenheit");
 			
@@ -96,25 +89,7 @@ public class MountainPassItemDetailsFragment extends Fragment {
 			} else {
 				mTemperatureInFahrenheit = mTemperatureInFahrenheit + "\u00b0F";
 			}
-			
-			try {
-				tempDate = tempDate.replace("[", "");
-				tempDate = tempDate.replace("]", "");
-				
-				String[] a = tempDate.split(",");
-				StringBuilder result = new StringBuilder();
-				for (int i=0; i < 5; i++) {
-					result.append(a[i]);
-					result.append(",");
-				}
-				tempDate = result.toString().trim();
-				tempDate = tempDate.substring(0, tempDate.length()-1);
-				Date date = parseDateFormat.parse(tempDate);
-				mDateUpdated = displayDateFormat.format(date);
-			} catch (Exception e) {
-				Log.e(DEBUG_TAG, "Error parsing date: " + tempDate, e);
-			}
-			
+
 			mElevationInFeet = args.getString("ElevationInFeet");
 			mRoadCondition = args.getString("RoadCondition");
 			mRestrictionOneTravelDirection = args.getString("RestrictionOneTravelDirection");
@@ -122,6 +97,7 @@ public class MountainPassItemDetailsFragment extends Fragment {
 			mRestrictionTwoTravelDirection = args.getString("RestrictionTwoTravelDirection");
 			mRestrictionTwoText = args.getString("RestrictionTwoText");
 		}
+
 	}
 
 	@Override
