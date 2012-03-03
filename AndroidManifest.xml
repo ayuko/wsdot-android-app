@@ -47,10 +47,6 @@
             </intent-filter>
         </activity>
         
-        <activity
-   		    android:name=".ui.MountainPassDetailsFragment"
-   		    android:label="@string/title_mountainpassdetails" />
-        
    		<activity
    		    android:name=".ui.VesselWatchMapActivity"
    		    android:label="@string/title_vesselwatch"
@@ -166,7 +162,11 @@
    		    android:name=".ui.phone.MountainPassActivity"
    		    android:label="@string/title_mountainpass"
    		    android:configChanges="orientation|keyboardHidden" />
-   				
+
+        <activity
+   		    android:name=".ui.phone.MountainPassDetailsActivity"
+   		    android:label="@string/title_mountainpassdetails" />   		
+   						
    		<activity
    		    android:name=".ui.phone.RouteAlertsActivity"
    		    android:label="@string/title_routealerts"

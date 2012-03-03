@@ -28,19 +28,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TabHost;
 import android.widget.TextView;
 
-public class MountainPassDetailsFragment extends BaseActivity implements
+public class MountainPassDetailsFragment extends Fragment implements
 	CompoundButton.OnCheckedChangeListener {
 	
 	private static final String DEBUG_TAG = "MountainPassDetailsFragment";
@@ -55,21 +58,18 @@ public class MountainPassDetailsFragment extends BaseActivity implements
 	
 	private ArrayList<CameraItem> cameraItems;
 	private ArrayList<ForecastItem> forecastItems;
-		
+	private ViewGroup mRootView;
+
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.fragment_mountainpass_details);
-		
-        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
-        mTabHost.setup();
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
         
-		Bundle args = getIntent().getExtras();
+		Bundle args = activity.getIntent().getExtras();
 		if (args != null) {
-		    cameraItems = (ArrayList<CameraItem>)getIntent().getSerializableExtra("Cameras");
-		    forecastItems = (ArrayList<ForecastItem>)getIntent().getSerializableExtra("Forecasts");
+		    cameraItems = (ArrayList<CameraItem>)activity.getIntent().getSerializableExtra("Cameras");
+		    forecastItems = (ArrayList<ForecastItem>)activity.getIntent().getSerializableExtra("Forecasts");
 			
 			String tempDate = args.getString("DateUpdated");
 			mTitle = args.getString("MountainPassName");
@@ -91,43 +91,84 @@ public class MountainPassDetailsFragment extends BaseActivity implements
 			} catch (Exception e) {
 				Log.e(DEBUG_TAG, "Error parsing date: " + tempDate, e);
 			}
-		}    
+		}
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_mountainpass_details, null);	
+        mTabHost = (TabHost) mRootView.findViewById(android.R.id.tabhost);
+        mTabHost.setup();
         
-        ((TextView) findViewById(R.id.mountainpass_title)).setText(mTitle);
-        ((TextView) findViewById(R.id.mountainpass_subtitle)).setText(mDateUpdated);
-        mStarred = (CompoundButton) findViewById(R.id.star_button);
+        ((TextView) mRootView.findViewById(R.id.mountainpass_title)).setText(mTitle);
+        ((TextView) mRootView.findViewById(R.id.mountainpass_subtitle)).setText(mDateUpdated);
+        mStarred = (CompoundButton) mRootView.findViewById(R.id.star_button);
         
         mStarred.setFocusable(true);
         mStarred.setClickable(true);
         
-        mTabManager = new TabManager(this, mTabHost, R.id.realtabcontent);
-
-        mTabManager.addTab(mTabHost.newTabSpec("report")
-        		.setIndicator(buildIndicator("Report")),
-                MountainPassItemDetailsFragment.class, null);
+        mTabManager = new TabManager(getActivity(), mTabHost, R.id.realtabcontent);
         
-        if (!cameraItems.isEmpty()) {
-	        mTabManager.addTab(mTabHost.newTabSpec("cameras")
-	        		.setIndicator(buildIndicator("Cameras")),
-	                MountainPassItemCameraFragment.class, null);
-        }
-        if (!forecastItems.isEmpty()) {
-	        mTabManager.addTab(mTabHost.newTabSpec("forecast")
-	        		.setIndicator(buildIndicator("Forecast")),
-	                MountainPassItemForecastFragment.class, null);
-        }
-        /*
-        mTabManager.addTab(mTabHost.newTabSpec("map")
-        		.setIndicator(buildIndicator("Map")),
-                MountainPassItemMapFragment.class, null);
-        */
+        /**
+         * Use AsyncTask to add the tabs. The AsyncTask allows the original fragment to complete
+         * it's transition, then we proceed with the tab fragments. Avoid recursion issue.
+         * 
+         * http://stackoverflow.com/questions/7700226/display-fragment-viewpager-within-a-fragment
+         */
+        new addTabTask().execute();       
+        
+		return mRootView;
+	}	
+	
+	private class addTabTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+	        
+			mTabManager.addTab(mTabHost.newTabSpec("report")
+	        		.setIndicator(buildIndicator("Report")),
+	                MountainPassItemDetailsFragment.class, null);
+	        
+	        if (!cameraItems.isEmpty()) {
+		        mTabManager.addTab(mTabHost.newTabSpec("cameras")
+		        		.setIndicator(buildIndicator("Cameras")),
+		                MountainPassItemCameraFragment.class, null);
+	        }
+	        if (!forecastItems.isEmpty()) {
+		        mTabManager.addTab(mTabHost.newTabSpec("forecast")
+		        		.setIndicator(buildIndicator("Forecast")),
+		                MountainPassItemForecastFragment.class, null);
+	        }
+	        /*
+	        mTabManager.addTab(mTabHost.newTabSpec("map")
+	        		.setIndicator(buildIndicator("Map")),
+	                MountainPassItemMapFragment.class, null);
+	        */ 
+		}
+		
+	}
+	
+    @Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
         if (savedInstanceState != null) {
             mTabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
         }
-        
 	}
 
-    /**
+	/**
      * Build a {@link View} to be used as a tab indicator, setting the requested string resource as
      * its label.
      *
@@ -135,9 +176,9 @@ public class MountainPassDetailsFragment extends BaseActivity implements
      * @return View
      */
     private View buildIndicator(String textRes) {
-        final TextView indicator = (TextView) getLayoutInflater()
+        final TextView indicator = (TextView) getActivity().getLayoutInflater()
                 .inflate(R.layout.tab_indicator,
-                        (ViewGroup) findViewById(android.R.id.tabs), false);
+                        (ViewGroup) getActivity().findViewById(android.R.id.tabs), false);
         indicator.setText(textRes);
         return indicator;
     }	
@@ -149,7 +190,7 @@ public class MountainPassDetailsFragment extends BaseActivity implements
     }	
 		
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		// TODO Auto-generated method stub
+		// TODO Handle star being checked. This marks this pass as a favorite.
 	}
 	
     /**

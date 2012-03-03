@@ -22,6 +22,7 @@ import gov.wa.wsdot.android.wsdot.R;
 import gov.wa.wsdot.android.wsdot.shared.CameraItem;
 import gov.wa.wsdot.android.wsdot.shared.ForecastItem;
 import gov.wa.wsdot.android.wsdot.shared.MountainPassItem;
+import gov.wa.wsdot.android.wsdot.ui.phone.MountainPassDetailsActivity;
 import gov.wa.wsdot.android.wsdot.util.AnalyticsUtils;
 
 import java.io.BufferedInputStream;
@@ -142,7 +143,7 @@ public class MountainPassFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Bundle b = new Bundle();
-		Intent intent = new Intent(getActivity(), MountainPassDetailsFragment.class);
+		Intent intent = new Intent(getActivity(), MountainPassDetailsActivity.class);
 		b.putString("MountainPassName", mountainPassItems.get(position).getMountainPassName());
 		b.putString("DateUpdated", mountainPassItems.get(position).getDateUpdated());
 		b.putString("TemperatureInFahrenheit", mountainPassItems.get(position).getTemperatureInFahrenheit());
