@@ -44,6 +44,18 @@ public abstract class BaseActivity extends FragmentActivity {
         return mActivityHelper;
     }
 
+    /**
+     * Takes a given intent and either starts a new activity to handle it (the default behavior),
+     * or creates/updates a fragment (in the case of a multi-pane activity) that can handle the
+     * intent.
+     *
+     * Must be called from the main (UI) thread.
+     */
+    public void openActivityOrFragment(Intent intent) {
+        // Default implementation simply calls startActivity
+        startActivity(intent);
+    }    
+    
     /**{@inheritDoc}*/
     @Override
     public MenuInflater getMenuInflater() {

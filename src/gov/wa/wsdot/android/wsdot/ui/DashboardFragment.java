@@ -22,6 +22,8 @@ import gov.wa.wsdot.android.wsdot.ui.phone.FerriesActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.MountainPassActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.SocialMediaActivity;
 import gov.wa.wsdot.android.wsdot.ui.phone.TollRatesActivity;
+import gov.wa.wsdot.android.wsdot.ui.tablet.MountainPassMultiPaneActivity;
+import gov.wa.wsdot.android.wsdot.util.UIUtils;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -59,6 +61,9 @@ public class DashboardFragment extends Fragment {
 
         root.findViewById(R.id.home_btn_passes).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+            	if (UIUtils.isHoneycombTablet(getActivity())) {
+            		startActivity(new Intent(getActivity(), MountainPassMultiPaneActivity.class));
+            	}
             	startActivity(new Intent(getActivity(), MountainPassActivity.class));
             }
         });
