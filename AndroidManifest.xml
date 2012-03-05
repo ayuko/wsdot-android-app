@@ -183,6 +183,11 @@
    		
    		<!-- Tablet-only activities -->
    		
+   		<activity
+   		    android:name=".ui.tablet.MountainPassMultiPaneActivity"
+   		    android:label="@string/title_mountainpass"
+   		    android:configChanges="orientation|keyboardHidden" />
+   		
    		<!-- Other manifest items -->
    		
    		<uses-library android:name="com.google.android.maps" />
